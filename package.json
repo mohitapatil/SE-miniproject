@@ -1,0 +1,22 @@
+{
+  "name": "se-miniproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "INDEX.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohitapatil/SE-miniproject.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mohitapatil/SE-miniproject/issues"
+  },
+  "homepage": "https://github.com/mohitapatil/SE-miniproject#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
