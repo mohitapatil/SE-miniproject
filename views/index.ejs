@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>store name</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+    <!-- <link rel='stylesheet' href='../public/stylesheets/style.css'/> -->
+		
+	</head>
+	<script src="https://code.jquery.com/jquery-1.12.3.min.js"   integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ="   crossorigin="anonymous"></script>
+
+	
+<body>
+    <div class="row" style="padding: 0% 5% 0% 5%;display: flex; flex-wrap: wrap ;">
+        <% hospitals.forEach(function(hospitals){ %>
+                <div >
+                    <ul>
+                        <li>
+                            <h3>
+                                <%= hospitals.name %>
+                            </h3>
+                        </li>
+                        <li>
+                            <p><%= hospitals.totalBeds %> </p> 
+                        </li>
+                        <li>
+                            <a  href="/<%= hospitals._id %>" >go</a>
+                        </li>
+                    </ul>
+                </div>
+        
+        <% }); %>
+
+    </div>
+
+    <p>View questions</p>
+    <a href="/question" >View</a>
+</body>

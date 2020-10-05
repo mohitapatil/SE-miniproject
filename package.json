@@ -17,6 +17,12 @@
   },
   "homepage": "https://github.com/mohitapatil/SE-miniproject#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "hjs": "0.0.6",
+    "mongodb": "^3.6.2",
+    "mongoose": "^5.10.7",
+    "validator": "^13.1.17"
   }
 }

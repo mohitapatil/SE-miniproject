@@ -1,0 +1,10 @@
+<h1>
+    <%= question.text %>
+</h1>
+
+<% question.answers.forEach(function(answer){ %>
+	<p>
+        <strong> <%= answer.author.hospital %> </strong> - <%= answer.text %>
+    </p>
+<% }) %>
+
