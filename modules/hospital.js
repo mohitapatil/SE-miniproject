@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
-const Hospital = mongoose.model('hospital', {
-    name: {
+var passportLocalMongoose = require("passport-local-mongoose"); 
+mongoose.set('useCreateIndex', true);
+const newHospital = new mongoose.Schema({
+    username: {
     type: String,
-    required: true,
+    // required: true,
     trim: true
     },
     email: {
@@ -13,7 +15,7 @@ const Hospital = mongoose.model('hospital', {
     },
     totalBeds: {
         type: Number,
-        required: true
+        // required: true
     },
     availableBeds: {
         type: Number,
@@ -21,7 +23,12 @@ const Hospital = mongoose.model('hospital', {
     },
     password: {
         type: String,
-        required: true
+        // required: true,
+        unique: true
     }
     })
-module.exports = Hospital
+
+// plugin for passport-local-mongoose 
+newHospital.plugin(passportLocalMongoose)
+
+module.exports = mongoose.model("Hospital", newHospital)

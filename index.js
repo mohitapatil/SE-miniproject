@@ -4,6 +4,9 @@ const mongodb = require('mongodb')
 const hospital= require('./modules/hospital')
 const question= require('./modules/questions')
 const answers= require('./modules/answers')
+const passport     = require("passport");
+const LocalStratergy=require("passport-local");
+const passportLocalMongoose=require("passport-local-mongoose");
 
 var bodyParesr   = require("body-parser");
 // const answers = require('./modules/answers')
@@ -17,41 +20,94 @@ useCreateIndex: true,
 useUnifiedTopology: true 
 })
 app.use(bodyParesr.urlencoded({extended: true}))
-
+mongoose.set('useFindAndModify', false);
 app.set("view engine", "ejs");
 app.use(express.static(__dirname ));
 
-app.get('/', (req, res) => {
+app.use(require("express-session")({
+	secret : "once again!!",
+	resave : false,
+	saveUninitialized : false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStratergy(hospital.authenticate()));
+passport.serializeUser(hospital.serializeUser());
+passport.deserializeUser(hospital.deserializeUser());
+
+
+app.use((req,res,next)=>{
+    res.locals.currentUser = req.hospital
+    next()
+})
+
+//hospital list
+app.get('/',isLoggedIn, (req, res) => {
     hospital.find({},function(err,allhospitals){
         if(err){
             console.log(err);
         }else{
-            res.render("index.ejs",{hospitals:allhospitals})
+            res.render("index.ejs",{hospital:allhospitals})
         }
     });
 });
+
+app.get('/hi',(req,res)=>{
+    res.render("hi.ejs")
+})
 
 //hospital registration
 app.get('/register', (req, res) => {
    res.render('register.ejs');
 })
+
 //post hospital registration
 app.post("/register", function(req, res){
-    var name= req.body.name
-    var password= req.body.password
-    var totalBeds= req.body.totalBeds;
-    var newHospital = { name: name, password: password, totalBeds: totalBeds}
-    hospital.create(newHospital, function(error,newhospital){
-        if(error){
-            console.log(error)
-        } else{
-            res.redirect("/"); 
+    var newHospital = { username: req.body.username,totalBeds: req.body.totalBeds,password: req.body.password}
+        hospital.register(newHospital, req.body.password, (err,hospital)=>{
+        if(err){
+            console.log(err)
+            return res.render("hi.ejs")
         }
+        passport.authenticate("local")(req,res,()=>{
+            res.redirect("hi.ejs")
+            // res.redirect("/:id",{hospital: hospital.id})
+        })
     })
+    // var name= req.body.name
+    // var password= req.body.password
+    // var totalBeds= req.body.totalBeds;
+    // var newHospital = { name: name, password: password, totalBeds: totalBeds}
+    // hospital.create(newHospital, function(error,newhospital){
+    //     if(error){
+    //         console.log(error)
+    //     } else{
+    //         res.redirect("/"); 
+    //     }
+    // })
     });
 
+//show login form
+app.get("/login",function(req,res){
+	res.render("login.ejs");
+});
+
+//router.use(hospitalRoutes);
+app.post("/login",passport.authenticate("local",
+				{
+					// successRedirect: "/products",
+					failureRedirect: "/login"
+}), function(req,res,next){
+		res.redirect("/")
+});
+
+app.get("/logout", function(req,res){
+	req.logout();
+	res.redirect("/");
+});
+
 //Show individual hospital details
-app.get("/:id",function(req,res){
+app.get("/hospital/:id",function(req,res){
 	// //FIND product with required id
 	// Product.findById(id,callback)
 	hospital.findById(req.params.id, function(err,selected){
@@ -145,6 +201,13 @@ app.get("/question/:id",function(req,res){
 // 	//connect new comment to product
 // 	//redirect product show page
 // });
+
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next()
+    }
+    res.redirect("/login")
+}
 
 app.listen(3000, () => {
     console.log('Server is up on port 3000.')

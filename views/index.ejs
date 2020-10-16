@@ -12,20 +12,30 @@
 
 	
 <body>
+    <div>
+        <ul class="nav nav-pills" style="float: right;">
+            <% if(!currentUser){ %>
+            <li role="presentation"><a href="/login" style="color: black;" >Login</a></li>
+            <li role="presentation"><a href="/register" style="color: black;">Register</a></li>
+ 
+            <li role="presentation" ><a href="/logout" style="color: black;">Logout</a></li>
+            <% } %>
+        </ul>	
+    </div>
     <div class="row" style="padding: 0% 5% 0% 5%;display: flex; flex-wrap: wrap ;">
-        <% hospitals.forEach(function(hospitals){ %>
+        <% hospital.forEach(function(hospitals){ %>
                 <div >
                     <ul>
                         <li>
                             <h3>
-                                <%= hospitals.name %>
+                                <%= hospitals.username %>
                             </h3>
                         </li>
                         <li>
                             <p><%= hospitals.totalBeds %> </p> 
                         </li>
                         <li>
-                            <a  href="/<%= hospitals._id %>" >go</a>
+                            <a  href="/hospital/<%= hospitals._id %>" >go</a>
                         </li>
                     </ul>
                 </div>
