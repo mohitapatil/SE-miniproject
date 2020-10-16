@@ -42,7 +42,7 @@ app.use((req,res,next)=>{
 })
 
 //hospital list
-app.get('/',isLoggedIn, (req, res) => {
+app.get('/', (req, res) => {
     hospital.find({},function(err,allhospitals){
         if(err){
             console.log(err);
@@ -156,51 +156,52 @@ app.get("/question/:id",function(req,res){
 
 });
 
-// //add answer
-// app.get("/question/:id/answers/new",function(req,res){
-// 	//find product by id
-// 	question.findById(req.params.id,function(err,question){
-// 		if(err){
-// 			console.log(err);
-// 		}else{
-// 			res.render("answer/new",{question: question});
-// 		}
-// 	});
-// 	//res.render("comments/new");
-// });
-// //post added answer
-// app.post("/question/:id/answers",function(req,res){
-// 	//lookup products using id
-// 	question.findById(req.params.id,function(err,question){
-// 		if(err){
-// 			console.log(err);
-// 			res.redirect("/question");	
-// 		}else{
-// 		answers.create(req.body.answer,function(err,answer){
-// 			if(err){
-// 				console.log(err);
-// 			}else {
-//                 //add username and id to comment
+//add answer
+app.get("/question/:id/answers/new",isLoggedIn,function(req,res){
+	//find product by id
+	question.findById(req.params.id,function(err,question){
+		if(err){
+			console.log(err);
+		}else{
+			res.render("newAnswer.ejs",{question: question});
+		}
+	});
+	//res.render("comments/new");
+});
+//post added answer
+app.post("/question/:id/answers",function(req,res){
+	//lookup products using id
+	question.findById(req.params.id,function(err,question){
+		if(err){
+			console.log(err);
+			res.redirect("/question");	
+		}else{
+            const newAnswer = new answers({text: req.body.text})
+		answers.create( newAnswer,function(err,answer){
+			if(err){
+				console.log(err);
+			}else {
+                //add username and id to comment
                 
-// 				// console.log(req.user.username);
-// 				answer.author.id = req.user._id;
-// 				answer.author.name = req.user.name;
-// 				//save comment
-// 				comment.save();
-// 				question.answers.push(answer);
-// 				question.save();
-// 				console.log(answer);
-// 				/////
-// 				res.redirect("/question/" + question._id); 
-// 				/////
-// 			}
-// 		});
-// 		}
-// 	});
-// 	//create new comments
-// 	//connect new comment to product
-// 	//redirect product show page
-// });
+				// console.log(req.user.username);
+				answer.author.id = req.user._id;
+				answer.author.hospital = req.user.username;
+				//save comment
+				answer.save();
+				question.answers.push(answer);
+				question.save();
+				console.log(answer);
+				/////
+				res.redirect("/question/" + question._id); 
+				/////
+			}
+		});
+		}
+	});
+	//create new comments
+	//connect new comment to product
+	//redirect product show page
+});
 
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){

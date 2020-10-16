@@ -4,7 +4,9 @@
 
 <% question.answers.forEach(function(answer){ %>
 	<p>
-        <strong> <%= answer.author.hospital %> </strong> - <%= answer.text %>
+         <%= answer.author.hospital %> - <%= answer.text %>
     </p>
 <% }) %>
+
+<a  href="/question/<%= question._id%>/answers/new ">add answer</a>
 
