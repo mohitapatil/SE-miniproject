@@ -6,6 +6,10 @@ var answerSchema = new mongoose.Schema({
         type:Number,
         default: 0
     },
+    // upvote: {
+    //     type:ObjectId,
+    //     ref: "Hospital"
+    // },
     author: {
 		id: {
 			type: mongoose.Schema.Types.ObjectId,

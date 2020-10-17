@@ -6,6 +6,11 @@
 	<p>
          <%= answer.author.hospital %> - <%= answer.text %>
     </p>
+    <p>
+        <%= answer.upvote %>
+    </p>
+    <a  href="/question/<%= question._id%>/answers/<%= answer._id %>/upvot">upvote</a>
+
 <% }) %>
 
 <a  href="/question/<%= question._id%>/answers/new ">add answer</a>

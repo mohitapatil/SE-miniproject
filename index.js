@@ -120,6 +120,12 @@ app.get("/hospital/:id",function(req,res){
 
 });
 
+//Update hospital details
+
+
+
+
+
 //get question list
 app.get('/question', (req, res) => {
     question.find({},(error,allquestions)=>{
@@ -203,12 +209,44 @@ app.post("/question/:id/answers",function(req,res){
 	//redirect product show page
 });
 
+app.get('/question/:id/answers/:comment_id/upvot', function(req,res,next){
+
+    answers.findByIdAndUpdate(req.params.comment_id,{'$inc':{upvote: 1}},{new: true}).exec((err, updatedvalue)=>{
+        if(err){
+            res.redirect("back")
+        }else{
+            res.redirect("back")
+        }
+    })
+})
+
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){
         return next()
     }
     res.redirect("/login")
 }
+
+// function checkProductOwnership(req,res,next){
+// 	if(req.isAuthenticated()){
+// 	 	Product.findById(req.params.id,function(err,foundProduct){
+// 		if(err){
+// 			res.redirect("back");
+// 		}else{
+// 				//if admin
+// 			if(req.user.isAdmin){
+// 			next();
+// 			}
+// 			else{
+// 				res.redirect("back");			}
+// 		}
+// 	});
+// 	}
+// 		//else redirect
+// 	else{
+// 		res.redirect("back");
+// 	}
+// }
 
 app.listen(3000, () => {
     console.log('Server is up on port 3000.')

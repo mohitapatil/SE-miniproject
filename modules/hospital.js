@@ -13,6 +13,12 @@ const newHospital = new mongoose.Schema({
     trim: true,
     lowercase: true
     },
+    address: String,
+    Doctors: [
+        {
+            type:String
+        }
+    ],
     totalBeds: {
         type: Number,
         // required: true
