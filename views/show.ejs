@@ -7,4 +7,29 @@
     <%= hospital.totalBeds %>
 </p>
 
-<a href="/hospital/:id/edit">Edit</a>
+<p>
+    <%= hospital.availableBeds %>
+</p>
+<p>
+    <%= hospital.address %>
+</p>
+
+<div class="row" style="padding: 0% 5% 0% 5%;display: flex; flex-wrap: wrap ;">
+    <p>Doctors</p>
+    <% hospital.Doctors.forEach(function(doctor){ %>
+            <div >
+                <ul>
+                    <li>
+                        <h3>
+                            <%= doctor %>
+                        </h3>
+                    </li>
+                </ul>
+            </div>
+    
+    <% }); %>
+
+</div>
+<% if(currentUser && hospital.id == currentUser._id) { %>
+    <a href="/hospital/<%= hospital._id %>/edit">Edit</a>
+    <% } %>

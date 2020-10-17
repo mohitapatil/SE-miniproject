@@ -7,6 +7,8 @@ const answers= require('./modules/answers')
 const passport     = require("passport");
 const LocalStratergy=require("passport-local");
 const passportLocalMongoose=require("passport-local-mongoose");
+const methodOverride= require("method-override");
+
 
 var bodyParesr   = require("body-parser");
 // const answers = require('./modules/answers')
@@ -36,10 +38,10 @@ passport.serializeUser(hospital.serializeUser());
 passport.deserializeUser(hospital.deserializeUser());
 
 
-app.use((req,res,next)=>{
-    res.locals.currentUser = req.hospital
-    next()
-})
+app.use(function(req,res,next){
+    res.locals.currentUser = req.user;
+    next();
+});
 
 //hospital list
 app.get('/', (req, res) => {
@@ -74,17 +76,6 @@ app.post("/register", function(req, res){
             // res.redirect("/:id",{hospital: hospital.id})
         })
     })
-    // var name= req.body.name
-    // var password= req.body.password
-    // var totalBeds= req.body.totalBeds;
-    // var newHospital = { name: name, password: password, totalBeds: totalBeds}
-    // hospital.create(newHospital, function(error,newhospital){
-    //     if(error){
-    //         console.log(error)
-    //     } else{
-    //         res.redirect("/"); 
-    //     }
-    // })
     });
 
 //show login form
@@ -109,20 +100,36 @@ app.get("/logout", function(req,res){
 //Show individual hospital details
 app.get("/hospital/:id",function(req,res){
 	// //FIND product with required id
-	// Product.findById(id,callback)
-	hospital.findById(req.params.id, function(err,selected){
+    // Product.findById(id,callback)
+    //console.log(req.local.currentUser)
+	hospital.findById(req.params.id, function(err,hospital){
 		if(err){
 			console.log(err);
 		}else{
-			res.render("show.ejs",{hospital: selected});
+			res.render("show.ejs",{hospital});
 		}
 	});
 
 });
 
 //Update hospital details
+app.get("/hospital/:id/edit",isLoggedIn, function(req,res){
+    hospital.findById(req.params.id,(err, hospital)=>{
+        res.render("hospitalUpdate.ejs",{hospital: hospital})
+    })
+})
 
-
+//post updates of hospital
+app.post("/hospital/:id",function(req,res){
+	//find and update correct products
+	hospital.findByIdAndUpdate(req.params.id,req.body.hospital,function(err,updatedProduct){
+		if(err){
+			res.redirect("/");
+		}else{
+			res.redirect("/hospital/" + req.params.id);
+		}
+	});
+});
 
 
 
@@ -227,18 +234,19 @@ function isLoggedIn(req,res,next){
     res.redirect("/login")
 }
 
-// function checkProductOwnership(req,res,next){
+// function checkHospitalOwnership(req,res,next){
 // 	if(req.isAuthenticated()){
-// 	 	Product.findById(req.params.id,function(err,foundProduct){
+// 	 	hospital.findById(req.params.id,function(err,foundHospital){
 // 		if(err){
+//             console.log(err)
 // 			res.redirect("back");
 // 		}else{
 // 				//if admin
-// 			if(req.user.isAdmin){
+// 			if(req.params.id === req.body.hospital.id){
 // 			next();
 // 			}
 // 			else{
-// 				res.redirect("back");			}
+// 				res.redirect("/");			}
 // 		}
 // 	});
 // 	}
