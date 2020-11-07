@@ -17,7 +17,8 @@
             <% if(!currentUser){ %>
             <li role="presentation"><a href="/login" style="color: black;" >Login</a></li>
             <li role="presentation"><a href="/register" style="color: black;">Register</a></li>
- 
+            <% }else {%>
+            <li role="presentation" > <a href="/hospital/<%= currentUser._id %>" style="color: black;"> Signed in as <%= currentUser.username %></a></li>
             <li role="presentation" ><a href="/logout" style="color: black;">Logout</a></li>
             <% } %>
         </ul>	

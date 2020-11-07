@@ -1,14 +1,18 @@
 
 <form action="/hospital/<%= hospital._id %>?_method=PUT" method="POST">
-	<div class="form-group">
+    <p>Hospital</p>
+    <div class="form-group">
 	<input class="form-control" type="text" placeholder="name" name="hospital[username]" value="<%=hospital.username %>">
-	</div>
+    </div>
+    <p>Total Beds in Hospital</p>
 	<div class="form-group">
 			<input class="form-control" type="number" name="hospital[totalBeds]" value="<%=hospital.totalBeds %>"  min ="1" step= "1">
     </div>
+    <p>Available Beds in Hospital</p>
     <div class="form-group">
         <input class="form-control" type="number" name="hospital[availableBeds]" value="<%=hospital.availableBeds %>"  min ="1" step= "1">
     </div>
+    <p>Hospital Address</p>
 	<div class="form-group">
 	<input class="form-control" type="text" name="hospital[address]" value="<%=hospital.address %>">
 	</div>

@@ -5,7 +5,8 @@ mongoose.set('useCreateIndex', true);
 const newHospital = new mongoose.Schema({
     username: {
     type: String,
-    // required: true,
+    required: true,
+    unique:true,
     trim: true
     },
     email: {
@@ -26,11 +27,6 @@ const newHospital = new mongoose.Schema({
     availableBeds: {
         type: Number,
         // required: true
-    },
-    password: {
-        type: String,
-        // required: true,
-        unique: true
     }
     })
 

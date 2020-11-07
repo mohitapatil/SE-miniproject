@@ -65,14 +65,14 @@ app.get('/register', (req, res) => {
 
 //post hospital registration
 app.post("/register", function(req, res){
-    var newHospital = { username: req.body.username,totalBeds: req.body.totalBeds,password: req.body.password}
+    var newHospital = new hospital({ username: req.body.username,totalBeds: req.body.totalBeds})
         hospital.register(newHospital, req.body.password, (err,hospital)=>{
         if(err){
             console.log(err)
             return res.render("hi.ejs")
         }
         passport.authenticate("local")(req,res,()=>{
-            res.redirect("hi.ejs")
+            res.redirect("/")
             // res.redirect("/:id",{hospital: hospital.id})
         })
     })
