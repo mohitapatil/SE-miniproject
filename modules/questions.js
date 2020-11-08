@@ -10,7 +10,12 @@ const question = mongoose.model('question', {
            type: mongoose.Schema.Types.ObjectId,
            ref: "Answer"
         }
-     ]
+     ],
+     tags: [{
+        type: Map,
+        of: Number,
+        default: 0
+    }]
 
 })
 module.exports = question

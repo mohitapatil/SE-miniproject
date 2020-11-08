@@ -17,6 +17,8 @@ var answerSchema = new mongoose.Schema({
 		},
 		hospital: String
 	}
+},{
+    timestamps: true
 });
  
 module.exports = mongoose.model("Answer", answerSchema);

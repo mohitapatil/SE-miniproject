@@ -146,27 +146,64 @@ app.get('/question', (req, res) => {
     
 //add new question in tahe list
 app.post("/question", function(req, res){
-    var text= req.body.text
-    var newQuestion = { text: text}
+	var text= req.body.text
+	const tags = new Map()
+	// console.log(req.body.tags)
+	// console.log(req.body.el)
+	const parts = req.body.tags_input.split(',')
+	parts.forEach(e => {
+		tags.set(e,0)
+	}
+	);
+
+	var newQuestion = { text: text, tags}
+	
     question.create(newQuestion, function(error,newquestion){
         if(error){
             console.log(error)
         } else{
+			newquestion.tags.forEach(e => {
+				console.log(e)
+			})
             res.redirect("/question"); 
         }
     })
     });
 
 //show individual questions with their answers
-app.get("/question/:id",function(req,res){
-	question.findById(req.params.id).populate('answers').exec(function(err,question){
-		if(err){
-			console.log(err);
-		}else{
-			res.render("showQuestions.ejs",{question: question});
-		}
-	});
+app.get("/question/:id",async (req,res) =>{
+	// const sortt ={}
+	// question.findById(req.params.id).populate('answers').exec(function(err,question){
+	// 	if(err){
+	// 		console.log(err);
+	// 	}else{
+	// 		res.render("showQuestions.ejs",{question: question});
+	// 	}
+	// });
+	const sortt ={}
+	const matchh ={}
+	
+	if(req.query.upvote){
+		sortt.upvote = req.query.upvote
+	}
+	if (req.query.sortBy){
+		const parts = req.query.sortBy.split(':')
+		sortt[parts[0]] = parts[1] === 'desc' ? -1 : 1
+	}
 
+	try {
+		const quest = await question.findById(req.params.id)
+		await quest.populate({
+			path: 'answers',
+			options: {
+				sort: sortt
+			}
+		}).execPopulate()
+			console.log(sortt)
+			res.render("showQuestions.ejs",{question: quest});
+	} catch(e){
+		console.log(e)
+	}
 });
 
 //add answer
@@ -256,6 +293,6 @@ function isLoggedIn(req,res,next){
 // 	}
 // }
 
-app.listen(3000, () => {
+app.listen(8080, () => {
     console.log('Server is up on port 3000.')
     })
