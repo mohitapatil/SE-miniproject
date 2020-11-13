@@ -4,13 +4,16 @@ const mongodb = require('mongodb')
 const hospital= require('./modules/hospital')
 const question= require('./modules/questions')
 const answers= require('./modules/answers')
+const booking= require('./modules/booking')
 const passport     = require("passport");
 const LocalStratergy=require("passport-local");
 const passportLocalMongoose=require("passport-local-mongoose");
 const methodOverride= require("method-override");
+var stripe =require("stripe")("sk_test_51GqjnIK4s51wTJ1ClUHA9DZRtoyglY6pRdU0EBzkADFe7ePGOXTjAK7rBXenTiUhVsQtzMirCC0XKMQ5ZbOOUwgY00u8J04Qt8");
 
 
 var bodyParesr   = require("body-parser");
+const { request } = require('express')
 // const answers = require('./modules/answers')
 
 const app= express()
@@ -172,14 +175,6 @@ app.post("/question", function(req, res){
 
 //show individual questions with their answers
 app.get("/question/:id",async (req,res) =>{
-	// const sortt ={}
-	// question.findById(req.params.id).populate('answers').exec(function(err,question){
-	// 	if(err){
-	// 		console.log(err);
-	// 	}else{
-	// 		res.render("showQuestions.ejs",{question: question});
-	// 	}
-	// });
 	const sortt ={}
 	const matchh ={}
 	
@@ -195,6 +190,7 @@ app.get("/question/:id",async (req,res) =>{
 		const quest = await question.findById(req.params.id)
 		await quest.populate({
 			path: 'answers',
+			match: matchh,
 			options: {
 				sort: sortt
 			}
@@ -205,6 +201,35 @@ app.get("/question/:id",async (req,res) =>{
 		console.log(e)
 	}
 });
+
+//upvote question
+app.get('/question/:id/:key',async (req,res,next) =>{
+
+	const pandemic = req.params.key
+	try{
+		await question.findByIdAndUpdate(req.params.id,{'$inc':{"tags.pandemic": 1}},{new: true})
+		.exec()
+			res.redirect("back")
+	} catch(e){
+		console.log(e)
+	}
+
+	// console.log(req.params.tag)
+	// console.log(req.params.id)
+	
+	// const quest= question.findById(req.params.id)
+	// console.log((await quest).schema.paths.tags.ge)
+	// const ans=await question.updateOne(quest, {'$inc':{"tags.get(Key)": 1}},{new: true})
+	// console.log(ans)
+//	// question.findByIdAndUpdate(req.params.id,{'$inc':{"tag.get(Key)": 1}},{new: true}).exec((err, updatedvalue)=>{
+//    //     if(err){
+//	// 		console.log(err)
+//    //         res.redirect("back")
+//    //     }else{
+//    //         res.redirect("back")
+//    //     }
+//    // })
+})
 
 //add answer
 app.get("/question/:id/answers/new",isLoggedIn,function(req,res){
@@ -263,6 +288,50 @@ app.get('/question/:id/answers/:comment_id/upvot', function(req,res,next){
         }
     })
 })
+
+
+
+//BOOKING
+app.get('/hospital/:id/checkout',function(req,res){	
+	//// var errMsg = req.flash('error')[0];
+	hospital.findById(req.params.id, function(err,hospital){
+		if(err){
+			console.log(err);
+		}else{
+			res.render("checkout.ejs",{hospital});
+		}
+	});
+});
+
+app.post('/hospital/:id/checkout',async (req,res)=>{
+ var hosp = await hospital.findById(req.params.id)
+var stripe= await require("stripe")("sk_test_51GqjnIK4s51wTJ1ClUHA9DZRtoyglY6pRdU0EBzkADFe7ePGOXTjAK7rBXenTiUhVsQtzMirCC0XKMQ5ZbOOUwgY00u8J04Qt8");
+	stripe.charges.create({
+        amount: hosp.price * 100,
+        currency: "inr",
+        source: "tok_mastercard", // obtained with Stripe.js
+        description: "Test Charge"
+    }, function(err, charge) {
+		    // console.log("Entered ChargeCreate Callback Function.");
+        if (err) {
+			      // console.log("Encountered Stripe error.");
+			console.log(err)
+            return res.redirect('/');
+        }
+        var order = new booking({
+            toHospital: req.body.id,
+            address: req.body.address,
+            name: req.body.name,
+            paymentId: charge.id
+        });
+		order.save(function(err, result) {
+			hosp.booking = order.id
+			      // console.log("Entered UserSave Callback Function.");
+            res.redirect('/');
+		});
+        });
+    }); 
+
 
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){

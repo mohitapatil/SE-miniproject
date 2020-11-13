@@ -2,16 +2,26 @@
     <%= question.text %>
 </h1>
 
+<% question.tags.forEach(tag) %>
+    <% function tag(value,key){ %>
+        <a href="/question/<%= question._id  %>/ <%= key %>"> 
+            <%= key %> 
+        </a>
+        - <%= value %>
+    <% } %>
+
+
 <% question.answers.forEach(function(answer){ %>
 	<p>
          <%= answer.author.hospital %> - <%= answer.text %>
     </p>
     <p>
         <%= answer.upvote %>
+        <a  href="/question/<%= question._id%>/answers/<%= answer._id %>/upvot">upvote</a>
     </p>
-    <a  href="/question/<%= question._id%>/answers/<%= answer._id %>/upvot">upvote</a>
+    
 
 <% }) %>
-
+<p> </p>
 <a  href="/question/<%= question._id%>/answers/new ">add answer</a>
 

@@ -10,26 +10,35 @@
 <p>Beds Available
     <%= hospital.availableBeds %>
 </p>
+
+<p>Bed price
+    <%= hospital.price %>
+</p>
+
+<div>
+    <ul class="nav nav-pills" style="float: right;">
+        <% if(!currentUser){ %>
+        <li role="presentation"><a href="/login" style="color: black;" >Login</a></li>
+        <li role="presentation"><a href="/register" style="color: black;">Register</a></li>
+        <% }else {%>
+        <li role="presentation" > <a href="/hospital/<%= currentUser._id %>" style="color: black;"> Signed in as <%= currentUser.username %></a></li>
+        <li role="presentation" ><a href="/logout" style="color: black;">Logout</a></li>
+        <% } %>
+    </ul>	
+</div>
+<% if(hospital.availableBeds>0){ %>
+    <a href="/hospital/<%= hospital._id %>/checkout">Book bed</a>
+    <% } %>
+
 <p>Address:
     <%= hospital.address %>
 </p>
 
-<div class="row" style="padding: 0% 5% 0% 5%;display: flex; flex-wrap: wrap ;">
-    <p>Doctors</p>
-    <% hospital.Doctors.forEach(function(doctor){ %>
-            <div >
-                <ul>
-                    <li>
-                        <h3>
-                            <%= doctor %>
-                        </h3>
-                    </li>
-                </ul>
-            </div>
-    
-    <% }); %>
-
-</div>
 <% if(currentUser && hospital.id == currentUser._id) { %>
     <a href="/hospital/<%= hospital._id %>/edit">Edit</a>
+        <% hospital.booking.forEach(function(book){ %>
+            <h3>
+                <%= book.name %>
+            </h3>
+        <% }) %>
     <% } %>

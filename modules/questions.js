@@ -11,11 +11,10 @@ const question = mongoose.model('question', {
            ref: "Answer"
         }
      ],
-     tags: [{
+     tags: {
         type: Map,
-        of: Number,
-        default: 0
-    }]
+        of: Number
+    }
 
 })
 module.exports = question

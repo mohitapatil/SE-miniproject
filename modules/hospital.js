@@ -9,17 +9,21 @@ const newHospital = new mongoose.Schema({
     unique:true,
     trim: true
     },
+    price: {
+        type:Number
+    },
     email: {
     type: String,
     trim: true,
     lowercase: true
     },
     address: String,
-    Doctors: [
+    booking: [
         {
-            type:String
+           type: mongoose.Schema.Types.ObjectId,
+           ref: "booking"
         }
-    ],
+     ],
     totalBeds: {
         type: Number,
         // required: true
